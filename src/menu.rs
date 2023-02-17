@@ -41,6 +41,28 @@ fn menu_call(
     }
 }
 
+fn start_button_system(
+    mut commands: Commands,
+    interaction_query: Query<&Interaction, (Changed<Interaction>, With<Button>)>,
+    start_menu_query: Query<Entity, With<StartMenu>>,
+) {
+    // TODO nrv explain pls
+    // let start_interaction = interaction_query.single();
+    for start_interaction in &interaction_query {
+        match start_interaction {
+            Interaction::Clicked => {
+                let start_menu_entity = start_menu_query.single();
+                commands.entity(start_menu_entity).despawn();
+                if (true) {
+
+                }
+            }
+            Interaction::Hovered => { /* Nothink */ }
+            Interaction::None => { /* Nothink */ }
+        }
+    }
+}
+
 fn spawn_start_menu(
     commands: &mut Commands,
     asset_server: &Res<AssetServer>,
@@ -86,25 +108,6 @@ fn spawn_start_menu(
                     });
             })
             .insert(StartMenu);
-    }
-}
-
-fn start_button_system(
-    mut commands: Commands,
-    interaction_query: Query<&Interaction, (Changed<Interaction>, With<Button>)>,
-    start_menu_query: Query<Entity, With<StartMenu>>,
-) {
-    // TODO nrv explain pls
-    // let start_interaction = interaction_query.single();
-    for start_interaction in &interaction_query {
-        match start_interaction {
-            Interaction::Clicked => {
-                let start_menu_entity = start_menu_query.single();
-                commands.entity(start_menu_entity).despawn();
-            }
-            Interaction::Hovered => { /* Nothink */ }
-            Interaction::None => { /* Nothink */ }
-        }
     }
 }
 
