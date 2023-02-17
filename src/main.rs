@@ -2,6 +2,9 @@ use bevy::{prelude::*, winit::WinitSettings, sprite::{collide_aabb::{collide, Co
 mod menu;
 use menu::MenuPlugin;
 
+#[derive(Component, Deref)]
+struct Size(Vec2);
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
@@ -18,11 +21,34 @@ fn setup_map(
     mut meshes:  ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
+    spawn_map(&mut commands, Vec2::ZERO, Size(Vec2::new(1000., 1000.)), 0);
+
     let pos1 = Vec2::new(100., 200.);
     let pos2 = Vec2::new(-500., -100.);
-    spawn_dot(&mut commands, &mut meshes, &mut materials, pos1);
-    spawn_dot(&mut commands, &mut meshes, &mut materials, pos2);
-    spawn_line(&mut commands, pos1, pos2, 5.);
+
+    let mut spawn_dot_deps = (&mut commands, &mut meshes, &mut materials);
+
+    spawn_dot(&mut spawn_dot_deps, pos1, 1);
+    spawn_dot(&mut spawn_dot_deps, pos2, 1);
+    spawn_line(&mut commands, pos1, pos2, 5., 2);
+}
+
+fn spawn_map(
+    commands: &mut Commands,
+    position: Vec2,
+    size: Size,
+    layer: u32,
+){
+    commands.spawn(SpriteBundle {
+        sprite: Sprite {
+            color: Color::rgb(1.0, 1.0, 1.0),
+            custom_size: Some(*size),
+            ..default()
+        },
+        transform: Transform
+            ::from_translation(Vec3::new(position.x, position.y, layer as f32)),
+        ..default()
+    });
 }
 
 fn spawn_line(
@@ -30,6 +56,7 @@ fn spawn_line(
     target_1: Vec2,
     target_2: Vec2,
     width: f32,
+    layer: u32,
 ){
     let vec_ = target_2 - target_1;
     let middle_point = (vec_ / 2.) + target_1; 
@@ -40,28 +67,30 @@ fn spawn_line(
 
     commands.spawn(SpriteBundle {
         sprite: Sprite {
-            color: Color::rgb(1.0, 1.0, 1.0),
+            color: Color::hex("e60c0c").unwrap(),
             custom_size: Some(Vec2::new(length, width)),
             ..default()
         },
         transform: Transform
-            ::from_translation(Vec3::new(middle_point.x, middle_point.y, 0.))
+            ::from_translation(Vec3::new(middle_point.x, middle_point.y, layer as f32))
             .with_rotation(Quat::from_axis_angle(Vec3::new(0., 0., 1.), angle)),
         ..default()
     });
 }
 
 fn spawn_dot(
-    commands: &mut Commands,
-    meshes: &mut ResMut<Assets<Mesh>>,
-    materials: &mut ResMut<Assets<ColorMaterial>>,
+    (commands, meshes, materials): &mut (
+     &mut Commands,
+     &mut ResMut<Assets<Mesh>>,
+     &mut ResMut<Assets<ColorMaterial>>),
     position: Vec2,
+    layer: u32,
 ){
     commands
         .spawn(MaterialMesh2dBundle {
             mesh: meshes.add(shape::Circle::new(5.).into()).into(),
             material: materials.add(ColorMaterial::from(Color::hex("e60c0c").unwrap())),
-            transform: Transform::from_translation(Vec3::new(position.x, position.y, 0.)),
+            transform: Transform::from_translation(Vec3::new(position.x, position.y, layer as f32)),
             ..default()
         });
 }
