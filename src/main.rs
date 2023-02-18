@@ -16,100 +16,124 @@ struct Size(Vec2);
 #[derive(Component)]
 struct Map;
 
+#[derive(Component)]
+struct Dot;
+
+#[derive(Component)]
+struct Line;
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         // Only run the app when there is user input. This will significantly reduce CPU/GPU use.
         .insert_resource(WinitSettings::desktop_app())
         .add_plugin(MenuPlugin)
-        .add_startup_system(setup_map)
         .run();
 }
 
 //map chanking
 fn setup_map(
-    mut commands: Commands,
-    mut meshes: ResMut<Assets<Mesh>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
+    commands: &mut Commands,
 ) {
     let pos1 = Vec2::new(100., 200.);
     let pos2 = Vec2::new(-500., -100.);
 
+    let map = MapBundle::new(Vec2::ZERO, Size(Vec2::new(1000., 1000.)), 0);
 
-    let map = spawn_map(&mut commands, Vec2::ZERO, Size(Vec2::new(1000., 1000.)), 0);
-
-    let dot_deps = &mut (&mut commands, &mut meshes, &mut materials);
-    let dot1 = spawn_dot(dot_deps, pos1, 1);
-    let dot2 = spawn_dot(dot_deps, pos2, 1);
-
-    let line = spawn_line(&mut commands, pos1, pos2, 5., 2);
-
-    commands.entity(map).add_child(dot1);
-    commands.entity(map).add_child(dot2);
-    commands.entity(map).add_child(line);
-
+    // dot_deps.0.entity(map).add_child(dot1);
+    // dot_deps.0.entity(map).add_child(dot2);
+    // dot_deps.0.entity(map).add_child(line);
+    commands.spawn(map).with_children(|child_builder| {
+        child_builder.spawn(DotBundle::new(pos1, 1));
+        child_builder.spawn(DotBundle::new(pos2, 1));
+        child_builder.spawn(LineBundle::new(pos1, pos2, 5., 2));
+    });
 }
 
-fn spawn_map(
-    commands: &mut Commands,
-    position: Vec2,
-    size: Size,
-    layer: u32,
-) ->  Entity {
-    commands.spawn(SpriteBundle {
-        sprite: Sprite {
-            color: Color::rgb(1.0, 1.0, 1.0),
-            custom_size: Some(*size),
-            ..default()
-        },
-        transform: Transform::from_translation(Vec3::new(position.x, position.y, layer as f32)),
-        ..default()
-    }).id()
+#[derive(Bundle)]
+struct MapBundle {
+    sprite: SpriteBundle,
+    map: Map,
 }
 
-fn spawn_line(
-    commands: &mut Commands,
-    target_1: Vec2,
-    target_2: Vec2,
-    width: f32,
-    layer: u32,
-) -> Entity {
-    let vec_ = target_2 - target_1;
-    let middle_point = (vec_ / 2.) + target_1;
-    let length = vec_.length();
-
-    let angle = Vec2::angle_between(Vec2::new(1., 0.), vec_);
-    println!("{}", angle);
-
-    commands.spawn(SpriteBundle {
-        sprite: Sprite {
-            color: Color::hex("e60c0c").unwrap(),
-            custom_size: Some(Vec2::new(length, width)),
-            ..default()
-        },
-        transform: Transform::from_translation(Vec3::new(
-            middle_point.x,
-            middle_point.y,
-            layer as f32,
-        ))
-        .with_rotation(Quat::from_axis_angle(Vec3::new(0., 0., 1.), angle)),
-        ..default()
-    }).id()
+impl MapBundle {
+    fn new(position: Vec2, size: Size, layer: u32) -> Self {
+        Self {
+            map: Map,
+            sprite: SpriteBundle {
+                sprite: Sprite {
+                    color: Color::rgb(1.0, 1.0, 1.0),
+                    custom_size: Some(*size),
+                    ..default()
+                },
+                transform: Transform::from_translation(Vec3::new(
+                    position.x,
+                    position.y,
+                    layer as f32,
+                )),
+                ..default()
+            },
+        }
+    }
 }
 
-fn spawn_dot(
-    (commands, meshes, materials): &mut (
-        &mut Commands,
-        &mut ResMut<Assets<Mesh>>,
-        &mut ResMut<Assets<ColorMaterial>>,
-    ),
-    position: Vec2,
-    layer: u32,
-) -> Entity {
-    commands.spawn(MaterialMesh2dBundle {
-        mesh: meshes.add(shape::Circle::new(5.).into()).into(),
-        material: materials.add(ColorMaterial::from(Color::hex("e60c0c").unwrap())),
-        transform: Transform::from_translation(Vec3::new(position.x, position.y, layer as f32)),
-        ..default()
-    }).id()
+#[derive(Bundle)]
+struct LineBundle {
+    sprite: SpriteBundle,
+    line: Line,
+}
+
+impl LineBundle {
+    fn new(start_pos: Vec2, end_pos: Vec2, width: f32, layer: u32) -> Self {
+        let vec_ = end_pos - start_pos;
+        let middle_point = (vec_ / 2.) + start_pos;
+        let length = vec_.length();
+
+        let angle = Vec2::angle_between(Vec2::new(1., 0.), vec_);
+
+        Self {
+            line: Line,
+            sprite: SpriteBundle {
+                sprite: Sprite {
+                    color: Color::hex("e60c0c").unwrap(),
+                    custom_size: Some(Vec2::new(length, width)),
+                    ..default()
+                },
+                transform: Transform::from_translation(Vec3::new(
+                    middle_point.x,
+                    middle_point.y,
+                    layer as f32,
+                ))
+                .with_rotation(Quat::from_axis_angle(Vec3::new(0., 0., 1.), angle)),
+                ..default()
+            },
+        }
+    }
+}
+
+#[derive(Bundle)]
+struct DotBundle {
+    sprite: SpriteBundle,
+    dot: Dot,
+}
+
+impl DotBundle {
+    fn new(position: Vec2, layer: u32) -> Self {
+        Self {
+            dot: Dot,
+            sprite: SpriteBundle {
+                sprite: Sprite {
+                    color: Color::hex("e60c0c").unwrap(),
+                    custom_size: Some(Vec2::new(8., 8.)),
+                    ..default()
+                },
+                transform: Transform::from_translation(Vec3::new(
+                    position.x,
+                    position.y,
+                    layer as f32,
+                )),
+                ..default()
+            },
+        }
+    }
 }

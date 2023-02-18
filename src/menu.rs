@@ -1,4 +1,6 @@
 use bevy::prelude::*;
+
+use crate::{Map, setup_map};
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
 const PRESSED_BUTTON: Color = Color::rgb(0.35, 0.75, 0.35);
@@ -45,6 +47,7 @@ fn start_button_system(
     mut commands: Commands,
     interaction_query: Query<&Interaction, (Changed<Interaction>, With<Button>)>,
     start_menu_query: Query<Entity, With<StartMenu>>,
+    map_query: Query<Entity, With<Map>>,
 ) {
     // TODO nrv explain pls
     // let start_interaction = interaction_query.single();
@@ -53,8 +56,8 @@ fn start_button_system(
             Interaction::Clicked => {
                 let start_menu_entity = start_menu_query.single();
                 commands.entity(start_menu_entity).despawn();
-                if (true) {
-
+                if map_query.is_empty() {
+                    setup_map(&mut commands);                   
                 }
             }
             Interaction::Hovered => { /* Nothink */ }
