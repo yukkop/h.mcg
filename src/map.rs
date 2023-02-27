@@ -51,31 +51,13 @@ pub struct MapPlugin;
 
 impl Plugin for MapPlugin {
     fn build(&self, app: &mut App) {
+        app.add_system(node_system);
     }
 }
 
 #[derive(Component)]
 struct Hoverable2D {
     hovered: bool,
-}
-
-fn check_mouse_hovering_system(
-    pick_state: Res<PickState>,
-    mut query: Query<(&GlobalTransform, &Sprite, &mut Hoverable2D)>,
-) {
-    for pick in pick_state.top(Group::default()) {
-        if let Ok((entity, _intersection)) = pick {
-            if let Ok((transform, sprite, mut hoverable)) = query.get_mut(*entity) {
-                hoverable.hovered = true;
-            }
-        }
-    }
-
-    for (_transform, _sprite, mut hoverable) in query.iter_mut() {
-        if !hoverable.hovered {
-            hoverable.hovered = false;
-        }
-    }
 }
 
 //map chanking
@@ -132,6 +114,26 @@ pub fn setup_map(commands: &mut Commands) {
 struct MapBundle {
     sprite: SpriteBundle,
     map: Map,
+}
+
+fn node_system(
+    mut interaction_query: Query<
+        (&Interaction, &Transform),
+        (Changed<Interaction>, With<Node>),
+    >,
+) {
+    for (interaction, children) in &mut interaction_query {
+        match *interaction {
+            Interaction::Clicked => {
+                println!("Node Clicked");
+            }
+            Interaction::Hovered => {
+                println!("Node Hovered");
+            }
+            Interaction::None => {
+            }
+        }
+    }
 }
 
 impl MapBundle {
