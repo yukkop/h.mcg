@@ -1,6 +1,8 @@
 use bevy::prelude::*;
 
-use crate::{Map, setup_map};
+use crate::map::{Map, setup_map};
+
+
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
 const PRESSED_BUTTON: Color = Color::rgb(0.35, 0.75, 0.35);
@@ -28,7 +30,6 @@ fn setup(
     asset_server: Res<AssetServer>,
     start_menu_query: Query<Entity, With<StartMenu>>,
 ) {
-    commands.spawn(Camera2dBundle::default());
     spawn_start_menu(&mut commands, &asset_server, &start_menu_query);
 }
 
