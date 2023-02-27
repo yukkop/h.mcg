@@ -122,7 +122,8 @@ fn node_system(
         (Changed<Interaction>, With<Node>),
     >,
 ) {
-    for (interaction, children) in &mut interaction_query {
+    println!("interaction for nodes is empty? {}", interaction_query.is_empty());
+    for (interaction, transform) in &mut interaction_query {
         match *interaction {
             Interaction::Clicked => {
                 println!("Node Clicked");
