@@ -1,8 +1,9 @@
 use bevy::{
     prelude::*,
-    winit::WinitSettings, input::mouse::MouseMotion,
+    winit::WinitSettings,
 };
 
+mod net;
 mod map;
 use map::MapPlugin;
 mod menu;
