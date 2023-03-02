@@ -1,5 +1,7 @@
-use bevy::{prelude::{Bundle, Color, Transform, Component, Deref, default}, sprite::{SpriteBundle, Sprite}};
+use bevy::{prelude::{Bundle, Color, Transform, Component, Deref, default}, sprite::{SpriteBundle, Sprite, MaterialMesh2dBundle}};
 use bevy_math::{Vec2, Vec3, Quat};
+pub(crate) use bevy::prelude::*;
+use bevy_mod_picking::RaycastMesh;
 
 #[derive(Component)]
 pub struct OldNode {
@@ -62,8 +64,9 @@ pub struct Node {
 pub struct NodeBundle {
     pub node: Node,
     pub sprite: SpriteBundle,
+    pub r_mesh: RaycastMesh::<Node>
 }
-
+// TODO 
 impl NodeBundle {
     pub fn new(position: Vec2, layer: u32) -> Self {
         Self {
@@ -83,6 +86,7 @@ impl NodeBundle {
                 )),
                 ..default()
             },
+            r_mesh: RaycastMesh::<Node>::default()
         }
     }
 }

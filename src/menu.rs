@@ -49,6 +49,8 @@ fn start_button_system(
     interaction_query: Query<&Interaction, (Changed<Interaction>, With<Button>)>,
     start_menu_query: Query<Entity, With<StartMenu>>,
     map_query: Query<Entity, With<Map>>,
+    mut meshes: ResMut<Assets<Mesh>>,
+    mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     // TODO nrv explain pls
     // let start_interaction = interaction_query.single();
@@ -58,7 +60,7 @@ fn start_button_system(
                 let start_menu_entity = start_menu_query.single();
                 commands.entity(start_menu_entity).despawn_recursive();
                 if map_query.is_empty() {
-                    setup_map(&mut commands);                   
+                    // setup_map(&mut commands, &mut meshes, &mut materials);                   
                 }
             }
             Interaction::Hovered => { /* Nothink */ }
@@ -82,6 +84,7 @@ fn spawn_start_menu(
                 },
                 ..default()
             })
+            .insert(StartMenu)
             .with_children(|parent| {
                 // left vertical fill (border)
                 parent
@@ -110,8 +113,7 @@ fn spawn_start_menu(
                             },
                         ));
                     });
-            })
-            .insert(StartMenu);
+            });
     }
 }
 

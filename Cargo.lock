@@ -1918,6 +1918,7 @@ dependencies = [
  "bevy",
  "bevy_math",
  "bevy_mod_picking",
+ "bevy_mod_raycast",
 ]
 
 [[package]]
