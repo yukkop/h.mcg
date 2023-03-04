@@ -6,7 +6,7 @@ use bevy_mod_raycast::{
     DefaultRaycastingPlugin, Intersection, RaycastMesh, RaycastMethod, RaycastSource, RaycastSystem,
 };
 
-mod net;
+mod graph;
 mod map;
 use map::MapPlugin;
 mod menu;
@@ -19,10 +19,10 @@ fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
         // raycasts for Node type
-        .add_plugin(DefaultRaycastingPlugin::<net::structs::Node>::default())
+        .add_plugin(DefaultRaycastingPlugin::<graph::structs::Node>::default())
         .add_system_to_stage(
              CoreStage::First,
-             update_raycast_with_cursor.before(RaycastSystem::BuildRays::<net::structs::Node>),
+             update_raycast_with_cursor.before(RaycastSystem::BuildRays::<graph::structs::Node>),
          )
         // Only run the app when there is user input. This will significantly reduce CPU/GPU use.
         .insert_resource(WinitSettings::desktop_app())
@@ -40,12 +40,12 @@ fn setup(
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     commands.spawn(Camera2dBundle::default())
-    .insert(RaycastSource::<net::structs::Node>::new());
+    .insert(RaycastSource::<graph::structs::Node>::new());
 }
 
 fn update_raycast_with_cursor(
     mut cursor: EventReader<CursorMoved>,
-    mut query: Query<&mut RaycastSource<net::structs::Node>>,
+    mut query: Query<&mut RaycastSource<graph::structs::Node>>,
 ) {
     // Grab the most recent cursor event if it exists:
     let cursor_position = match cursor.iter().last() {
@@ -58,7 +58,7 @@ fn update_raycast_with_cursor(
     }
 }
 
-fn intersection(query: Query<&Intersection<net::structs::Node>>) {
+fn intersection(query: Query<&Intersection<graph::structs::Node>>) {
     for intersection in &query {
         info!(
             "Distance {:?}, Position {:?}",

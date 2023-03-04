@@ -1,6 +1,6 @@
 use bevy::{prelude::*, sprite::MaterialMesh2dBundle};
 use bevy_mod_picking::RaycastMesh;
-use crate::net::{plugin::{node_system}, structs::{OldNode, Dot, DotBundle, LineBundle, NodeBundle}};
+use crate::graph::{plugin::{node_system}, structs::{OldNode, Dot, DotBundle, LineBundle, NodeBundle}};
 
 pub struct MapPlugin;
 
@@ -66,7 +66,7 @@ pub fn setup_map(
                     material: materials.add(ColorMaterial::from(ColorMaterial::from(Color::hex("ffffff").unwrap()))),
                     ..default()
                 })
-                .insert(RaycastMesh::<crate::net::structs::Node>::default());
+                .insert(RaycastMesh::<crate::graph::structs::Node>::default());
 
                 for index_j in 0..index_i {
                     if intendent[index_i][index_j] > 0 {
@@ -146,7 +146,7 @@ pub fn setup_map_old(
                     material: materials.add(ColorMaterial::from(ColorMaterial::from(Color::hex("ffffff").unwrap()))),
                     ..default()
                 })
-                .insert(RaycastMesh::<crate::net::structs::Node>::default());
+                .insert(RaycastMesh::<crate::graph::structs::Node>::default());
 
                 for connection in node.connections {
                     // spawn Line
@@ -166,7 +166,7 @@ struct MapBundle {
 }
 
 impl MapBundle {
-    fn new(position: Vec2, size: crate::net::structs::Size, layer: u32) -> Self {
+    fn new(position: Vec2, size: crate::graph::structs::Size, layer: u32) -> Self {
         Self {
             map: Map,
             sprite: SpriteBundle {
