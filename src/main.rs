@@ -1,7 +1,4 @@
-use bevy::{
-    prelude::*,
-    winit::WinitSettings, sprite::MaterialMesh2dBundle,
-};
+use bevy::{prelude::*, sprite::MaterialMesh2dBundle, winit::WinitSettings};
 use bevy_mod_raycast::{
     DefaultRaycastingPlugin, Intersection, RaycastMesh, RaycastMethod, RaycastSource, RaycastSystem,
 };
@@ -21,9 +18,9 @@ fn main() {
         // raycasts for Node type
         .add_plugin(DefaultRaycastingPlugin::<graph::structs::Node>::default())
         .add_system_to_stage(
-             CoreStage::First,
-             update_raycast_with_cursor.before(RaycastSystem::BuildRays::<graph::structs::Node>),
-         )
+            CoreStage::First,
+            update_raycast_with_cursor.before(RaycastSystem::BuildRays::<graph::structs::Node>),
+        )
         // Only run the app when there is user input. This will significantly reduce CPU/GPU use.
         .insert_resource(WinitSettings::desktop_app())
         .add_plugin(MenuPlugin)
@@ -33,14 +30,14 @@ fn main() {
         .run();
 }
 
-
 fn setup(
     mut commands: Commands,
     mut meshes: ResMut<Assets<Mesh>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
-    commands.spawn(Camera2dBundle::default())
-    .insert(RaycastSource::<graph::structs::Node>::new());
+    commands
+        .spawn(Camera2dBundle::default())
+        .insert(RaycastSource::<graph::structs::Node>::new());
 }
 
 fn update_raycast_with_cursor(

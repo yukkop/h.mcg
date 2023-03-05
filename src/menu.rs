@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 
-use crate::map::{Map, setup_map};
-
+use crate::map::{setup_map, Map};
 
 const NORMAL_BUTTON: Color = Color::rgb(0.15, 0.15, 0.15);
 const HOVERED_BUTTON: Color = Color::rgb(0.25, 0.25, 0.25);
@@ -60,7 +59,7 @@ fn start_button_system(
                 let start_menu_entity = start_menu_query.single();
                 commands.entity(start_menu_entity).despawn_recursive();
                 if map_query.is_empty() {
-                    // setup_map(&mut commands, &mut meshes, &mut materials);                   
+                    // setup_map(&mut commands, &mut meshes, &mut materials);
                 }
             }
             Interaction::Hovered => { /* Nothink */ }

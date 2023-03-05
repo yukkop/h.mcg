@@ -6,5 +6,4 @@ pub fn node_system(
         (Changed<Interaction>, With<crate::graph::structs::Node>),
     >,
 ) {
-    
 }
