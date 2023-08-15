@@ -1,12 +1,4 @@
-use bevy::{
-    ecs::system::EntityCommands,
-    prelude::*,
-    sprite::{
-        collide_aabb::{collide, Collision},
-        MaterialMesh2dBundle,
-    },
-    winit::WinitSettings,
-};
+use bevy::{prelude::*, winit::WinitSettings};
 mod menu;
 use menu::MenuPlugin;
 
@@ -27,7 +19,7 @@ fn main() {
         .add_plugins(DefaultPlugins)
         // Only run the app when there is user input. This will significantly reduce CPU/GPU use.
         .insert_resource(WinitSettings::desktop_app())
-        .add_plugin(MenuPlugin)
+        .add_plugins(MenuPlugin)
         .run();
 }
 

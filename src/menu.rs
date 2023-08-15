@@ -16,10 +16,8 @@ pub struct MenuPlugin;
 
 impl Plugin for MenuPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(setup)
-            .add_system(button_system)
-            .add_system(start_button_system)
-            .add_system(menu_call);
+        app.add_systems(Startup, setup)
+            .add_systems(Update, (button_system, start_button_system, menu_call));
     }
 }
 
@@ -53,7 +51,7 @@ fn start_button_system(
     // let start_interaction = interaction_query.single();
     for start_interaction in &interaction_query {
         match start_interaction {
-            Interaction::Clicked => {
+            Interaction::Pressed => {
                 let start_menu_entity = start_menu_query.single();
                 commands.entity(start_menu_entity).despawn();
                 if map_query.is_empty() {
@@ -75,7 +73,9 @@ fn spawn_start_menu(
         commands
             .spawn(NodeBundle {
                 style: Style {
-                    size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+                    // size: Size::new(Val::Percent(100.0), Val::Percent(100.0)),
+                    width: Val::Percent(100.0),
+                    height: Val::Percent(100.0),
                     justify_content: JustifyContent::SpaceBetween,
                     ..default()
                 },
@@ -86,7 +86,9 @@ fn spawn_start_menu(
                 parent
                     .spawn(ButtonBundle {
                         style: Style {
-                            size: Size::new(Val::Px(150.0), Val::Px(65.0)),
+                            // size: Size::new(Val::Px(150.0), Val::Px(65.0)),
+                            width: Val::Px(150.0),
+                            height: Val::Px(65.0),
                             // center button
                             margin: UiRect::all(Val::Auto),
                             // horizontally center child text
@@ -124,7 +126,7 @@ fn button_system(
     for (interaction, mut color /* , children */) in &mut interaction_query {
         // let mut text = text_query.get_mut(children[0]).unwrap();
         match *interaction {
-            Interaction::Clicked => {
+            Interaction::Pressed => {
                 // text.sections[0].value = "Press".to_string();
                 *color = PRESSED_BUTTON.into();
             }
